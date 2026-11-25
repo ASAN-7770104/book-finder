@@ -1,5 +1,7 @@
 # Book Finder
 
+**English** · [Русский](README.ru.md)
+
 A small server-side web application to **search books** with the Open Library API. For every
 search it shows the number of results, a **books-per-decade chart**, the most frequent authors,
 and cards with covers. A book page shows the description, **rating bars**, subjects and links;
