@@ -1,0 +1,96 @@
+<%- include('partials/header') %>
+
+<section class="result-head">
+  <div>
+    <p class="eyebrow">Search results</p>
+    <h1>&ldquo;<%= query.q %>&rdquo;</h1>
+    <p class="chips">
+      <span class="chip">Search in: <%= modeLabel %></span>
+      <span class="chip">Sort: <%= sortLabel %></span>
+    </p>
+  </div>
+</section>
+
+<section class="card card-compact" aria-label="Change the search">
+  <%- include('partials/search-form', { compact: true }) %>
+</section>
+
+<% if (summary.total === 0) { %>
+
+  <section class="empty-state">
+    <h2>No results</h2>
+    <p>Open Library has no books matching &ldquo;<%= query.q %>&rdquo; in <%= modeLabel.toLowerCase() %>.
+      Check the spelling, try fewer words or search in &ldquo;Anything&rdquo;.</p>
+  </section>
+
+<% } else { %>
+
+  <section class="stats" aria-label="Summary">
+    <div class="stat">
+      <span class="stat-value"><%= formatNumber(summary.total) %></span>
+      <span class="stat-label">book<%= summary.total === 1 ? '' : 's' %> found</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value"><%= summary.from %>&ndash;<%= summary.to %></span>
+      <span class="stat-label">shown on this page</span>
+    </div>
+    <div class="stat">
+      <% if (summary.oldest !== null) { %>
+        <span class="stat-value"><%= summary.oldest %>&ndash;<%= summary.newest %></span>
+        <span class="stat-label">first-published years on this page</span>
+      <% } else { %>
+        <span class="stat-value">-</span>
+        <span class="stat-label">no publication years on this page</span>
+      <% } %>
+    </div>
+    <div class="stat">
+      <% if (summary.mostEditions) { %>
+        <span class="stat-value"><%= summary.mostEditions.editions %></span>
+        <span class="stat-label">editions of &ldquo;<%= summary.mostEditions.title %>&rdquo;, the most on this page</span>
+      <% } else { %>
+        <span class="stat-value">-</span>
+        <span class="stat-label">no edition data on this page</span>
+      <% } %>
+    </div>
+  </section>
+
+  <% if (summary.decades.length > 0) { %>
+    <section class="card" aria-labelledby="chart-title">
+      <h2 id="chart-title">Books per decade (this page)</h2>
+      <div class="chart" style="--cols: <%= summary.decades.length %>" role="img" aria-label="Bar chart of books per decade">
+        <% summary.decades.forEach((decade) => { %>
+          <div class="bar-col">
+            <span class="bar-count"><%= decade.count %></span>
+            <div class="bar-track"><div class="bar" style="height: <%= decade.percent %>%"></div></div>
+            <span class="bar-label"><%= decade.label %></span>
+          </div>
+        <% }) %>
+      </div>
+      <% if (summary.topAuthors.length > 0) { %>
+        <h3>Most frequent authors on this page</h3>
+        <p class="chips">
+          <% summary.topAuthors.forEach((author) => { %>
+            <% if (author.id) { %>
+              <a class="chip chip-link" href="/author/<%= author.id %>"><%= author.name %> (<%= author.count %>)</a>
+            <% } else { %>
+              <span class="chip"><%= author.name %> (<%= author.count %>)</span>
+            <% } %>
+          <% }) %>
+        </p>
+      <% } %>
+    </section>
+  <% } %>
+
+  <section aria-label="Books">
+    <div class="book-grid">
+      <% summary.books.forEach((book) => { %>
+        <%- include('partials/book-card', { book }) %>
+      <% }) %>
+    </div>
+  </section>
+
+  <%- include('partials/pagination') %>
+
+<% } %>
+
+<%- include('partials/footer') %>

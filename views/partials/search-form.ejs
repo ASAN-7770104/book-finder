@@ -1,0 +1,43 @@
+<%# Search form used on the home page and (compact) on the results page.
+    Needs: values, errors, modes, sorts, queryMin, queryMax.
+    Optional: compact (boolean) %>
+<% const isCompact = typeof compact !== 'undefined' && compact; %>
+
+<% if (errors.length > 0) { %>
+  <div class="alert alert-error" role="alert">
+    <strong>Please fix the following:</strong>
+    <ul>
+      <% errors.forEach((message) => { %>
+        <li><%= message %></li>
+      <% }) %>
+    </ul>
+  </div>
+<% } %>
+
+<form class="search-form <%= isCompact ? 'is-compact' : '' %>" action="/search" method="post" novalidate>
+  <div class="field field-wide">
+    <label for="q">Search text</label>
+    <input id="q" name="q" type="search" value="<%= values.q %>" maxlength="<%= queryMax %>"
+           placeholder="e.g. Dune, Tolkien, philosophy" autocomplete="off" required>
+  </div>
+
+  <div class="field">
+    <label for="mode">Search in</label>
+    <select id="mode" name="mode">
+      <% modes.forEach((item) => { %>
+        <option value="<%= item.value %>" <%= values.mode === item.value ? 'selected' : '' %>><%= item.label %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="sort">Sort by</label>
+    <select id="sort" name="sort">
+      <% sorts.forEach((item) => { %>
+        <option value="<%= item.value %>" <%= values.sort === item.value ? 'selected' : '' %>><%= item.label %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <button class="btn" type="submit">Search books</button>
+</form>
